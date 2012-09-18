@@ -9,20 +9,22 @@ class wp_auth_widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		?>
+		<div class="widget">
+			<h3 class="widget-title">Login</h3>
 		<div id="wp-auth-login-widget">
 			<form action="<?php echo get_bloginfo('url') ?>/login_process" method="post">
 				<p>
-					<label for="">Username</label> <br>
+					<label for="wp-auth-login">Username</label> <br>
 					<input type="text" name="wp-auth-login" value="">
 				</p>
 				<p>
-					<label for="">Password</label> <br>
+					<label for="wp-auth-password">Password</label> <br>
 					<input type="password" name="wp-auth-password" value="">
 				</p>
 				<input type="submit" value="Login" class="submit">
 			</form>
 		</div>
-
+		</div>
 		<?php
 	}
 
