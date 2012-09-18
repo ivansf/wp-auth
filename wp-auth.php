@@ -48,23 +48,27 @@ class WpAuth {
 			$this->path . 'img/ico-unlocked.png' );
 		add_submenu_page('wp_auth_admin', 'Lockdown Options','Lockdown', 'edit_pages', 
 			'wp_auth_admin_sub', array(&$this, 'page_config'));
-		add_options_page('Save Options', 'Sub page', 'manage_options', 'save_wp_auth_options', array(&$this, 'save_wp_auth_options'));
+		// add_options_page('Save Options', 'Sub page', 'manage_options', 'save_wp_auth_options', array(&$this, 'save_wp_auth_options'));
 	}
 
 	function page_config()
 	{
+		if (!empty($_POST)) {
+			//print_r($_POST); exit();
+			update_option('wp-auth-boxstyle', $_POST['wp-auth-box-style']);
+			update_option('wp-auth-buttonstyle', $_POST['wp-auth-button-style']);
+		}
 		// Template page.
-		require_once( dirname( __FILE__ ) . '/view-auth-options.php' );
+		include ( dirname( __FILE__ ) . '/view-auth-options.php' );
 	}
 
-	function save_wp_auth_options()
-	{
-		update_option('wp-auth-boxstyle', $_POST['wp-auth-box-style']);
-		update_option('wp-auth-buttonstyle', $_POST['wp-auth-button-style']);
+	// function save_wp_auth_options()
+	// {
+		
 
-		wp_redirect(admin_url() . 'admin.php?page=wp_auth_admin', 302);
-		// return 'asdasd';
-	}
+	// 	wp_redirect(admin_url() . 'admin.php?page=wp_auth_admin', 302);
+	// 	// return 'asdasd';
+	// }
 
 	function shortcode_login()
 	{
@@ -79,14 +83,17 @@ class WpAuth {
 		<div id="wp-auth-login" class="<?php echo get_option('wp-auth-boxstyle', 'white') ?>">
 			<form action="<?php echo get_bloginfo('url') ?>/login_process" method="post">
 				<p>
-					<label for="">Username</label> <br>
+					<label for="">Username</label>
 					<input type="text" name="wp-auth-login" value="">
 				</p>
 				<p>
-					<label for="">Password</label> <br>
+					<label for="">Password</label>
 					<input type="password" name="wp-auth-password" value="">
 				</p>
 				<input type="submit" value="Login" class="submit <?php echo get_option('wp-auth-buttonstyle', 'blue') ?>">
+				<p>
+				<a href="#">Lost your password?</a>
+				</p>
 			</form>
 		</div>
 		<?php
