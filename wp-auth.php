@@ -11,28 +11,32 @@ Author URI: http://www.ivansotof.com
 class WpAuth {
 
 	function WpAuth() {
+		if (!session_id() ) {
+			session_start();
+		}
+
+
+
 		register_activation_hook(__FILE__, array($this, 'activate'));
 		
 		$this->path = WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__));
+		require plugin_dir_path(__FILE__) . 'wp-auth-widget.php';
+
+		wp_register_style('wp-auth', $this->path . 'css/wp-auth.css' );
+		wp_enqueue_style('wp-auth');
 
 		add_action('admin_menu', array(&$this, 'pages'), 5, __FILE__, 'wpauth_toplevel_page');
+		add_action('wp', array(&$this, 'login_process') );
+		add_action('wp', array(&$this, 'logout') );
+
+		add_shortcode('wpauth-login', array(&$this, 'shortcode_login'));
+
 	}
 
 
 	function activate()
 	{
-		// global $wpdb;
-		// $table_name = $wpdb->prefix . "advice_user";
-		// $sql = "CREATE TABLE `$table_name` (
-		  // `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-		  // `customer_id` int(11) DEFAULT NULL,
-		  // `goal1_name` varchar(60) DEFAULT NULL,
-		  // `goal2_name` varchar(60) DEFAULT NULL,
-		  // `goal3_name` varchar(60) DEFAULT NULL,
-		  // PRIMARY KEY (`id`)
-		// )";
-		// require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-		// dbDelta($sql);
+		
 	}
 
 	/**
@@ -47,12 +51,147 @@ class WpAuth {
 
 	}
 
-
 	function page_config()
 	{
 		// Template page.
 		require_once( dirname( __FILE__ ) . '/view-auth-options.php' );
 	}
+
+	function shortcode_login()
+	{
+		if (!session_id() ) {
+			session_start();
+		}
+		if (isset($_SESSION['error_msg'])) {
+			echo '<div class="wp-auth-error">' . $_SESSION['error_msg'] . '</div>';
+			unset($_SESSION['error_msg']);
+		}
+		?>
+		<div id="wp-auth-login">
+			<form action="<?php echo get_bloginfo('url') ?>/login_process" method="post">
+				<p>
+					<label for="">Username</label> <br>
+					<input type="text" name="wp-auth-login" value="">
+				</p>
+				<p>
+					<label for="">Password</label> <br>
+					<input type="password" name="wp-auth-password" value="">
+				</p>
+				<input type="submit" value="Login" class="submit">
+			</form>
+		</div>
+		<?php
+
+	}
+
+	function login_process()
+	{
+		global $wp_query, $wpdb;
+
+
+		// creating a temporary fake post we can use to return.
+		// Based on Query Wrangler plugin.
+		$post = new stdClass();
+		$post->ID           = -42;  // Arbitrary post id
+		$post->post_title   = $post_title;
+		$post->post_content = 'Login page'; // this won't show.
+		$post->post_status  = 'publish';
+		$post->post_type    = 'page';
+		// $post->post_category= array('uncategorized');
+		$post->post_excerpt = '';
+
+
+		if ($wp_query->query_vars['name'] === 'login_process') {
+
+			$wp_query->queried_object = $post;
+			$wp_query->post           = $post;
+			$wp_query->found_posts    = true;
+			$wp_query->post_count     = true;
+			//$wp_query->max_num_pages = true;
+			$wp_query->is_single      = true;
+			$wp_query->is_posts_page  = true;
+			$wp_query->is_page        = true;
+			$wp_query->posts          = array($post);
+			$wp_query->is_404         = false;
+			$wp_query->is_post        = false;
+			$wp_query->is_home        = false;
+			$wp_query->is_archive     = false;
+			$wp_query->is_category    = false;
+			status_header(200);
+
+			//$wp_query = atb_query_handler($wp_query);
+			
+
+			if ( !is_user_logged_in() ) {
+		        $creds = array();
+		        $creds['user_login'] = $_POST['wp-auth-login'];
+		        $creds['user_password'] = $_POST['wp-auth-password'];
+		        $creds['remember'] = true;
+		        $user = wp_signon( $creds, false );
+
+		        if ( is_wp_error($user) ) {
+		        	$_SESSION['error_msg'] = $user->get_error_message();
+		        	wp_redirect($_SERVER['HTTP_REFERER'], 302);
+		        	exit();
+		        }
+
+		    } else {
+		    	wp_redirect(get_bloginfo('url'), 302);
+		    	exit();
+		    }
+
+
+			#unset($_SESSION['visitor_id']);
+			#unset($_SESSION['plan']);
+			#unset($_SESSION['password']);
+
+			wp_redirect(get_bloginfo('url'), 302);
+			exit();
+		}
+	}
+
+
+	function logout()
+	{
+		global $wp_query, $wpdb;
+
+
+		// creating a temporary fake post we can use to return.
+		// Based on Query Wrangler plugin.
+		$post = new stdClass();
+		$post->ID           = -42;  // Arbitrary post id
+		$post->post_title   = $post_title;
+		$post->post_content = 'Login page'; // this won't show.
+		$post->post_status  = 'publish';
+		$post->post_type    = 'page';
+		// $post->post_category= array('uncategorized');
+		$post->post_excerpt = '';
+
+		if ($wp_query->query_vars['name'] === 'logout') {
+
+			$wp_query->queried_object = $post;
+			$wp_query->post           = $post;
+			$wp_query->found_posts    = true;
+			$wp_query->post_count     = true;
+			//$wp_query->max_num_pages = true;
+			$wp_query->is_single      = true;
+			$wp_query->is_posts_page  = true;
+			$wp_query->is_page        = true;
+			$wp_query->posts          = array($post);
+			$wp_query->is_404         = false;
+			$wp_query->is_post        = false;
+			$wp_query->is_home        = false;
+			$wp_query->is_archive     = false;
+			$wp_query->is_category    = false;
+			status_header(200);
+
+			wp_logout();
+			wp_redirect(get_bloginfo('url'), 302);
+			exit();
+		}
+		
+	}
+
 }
 
 $wpauth = new WpAuth();
