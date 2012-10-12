@@ -9,7 +9,23 @@
 	width: 98%;
 	padding: 4px;
 }
+.error_msg {
+	background: #990000;
+	color: #FFF;
+	padding: 10px 15px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	width: 90%;
+	margin: 0 auto;
+	margin-bottom: 15px;
 
+}
+#wp-auth-login-widget .error_msg {
+	padding: 3px 14px;
+	width: 100%;
+	font-size: 90%;
+}
 #wp-auth-login-widget .submit,
 #wp-auth-login .submit {
 	-moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;

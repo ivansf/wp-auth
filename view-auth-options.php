@@ -7,6 +7,7 @@
 			<?php //echo get_option('wp-auth-buttonstyle', 'blue') ?>
 			<?php $box_style = get_option('wp-auth-boxstyle', 'white') ?>
 			<?php $button_style = get_option('wp-auth-buttonstyle', 'blue') ?>
+			<?php $wp_hide_admin = get_option('wp-auth-hide-admin', 'no'); //echo $wp_hide_admin; exit; ?>
 
 		<h2>Instructions</h2>
 
@@ -62,8 +63,11 @@
 				<tr>
 					<th scope="row">Admin protection</th>
 					<td>
-						<input type="checkbox" name="lock-wp-admin"> Hide admin pages when not logged in.
+						<input type="checkbox" name="lock-wp-admin" value="yes"
+							<?php echo $wp_hide_admin ?  'checked' : '';  ?>
+						 > Hide admin pages when not logged in.
 						<p class="description">This option will hide wp-admin/ and wp-login.php for users that are not logged in.</p>
+						<p class="description"><strong>Warning:</strong> Make sure you add a login page using the shortcode or the widget before enabling this option.</p>
 					</td>
 				</tr>
 				<tr>

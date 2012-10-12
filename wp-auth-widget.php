@@ -14,6 +14,12 @@ class wp_auth_widget extends WP_Widget {
 			
 		?>
 			<div id="wp-auth-login-widget">
+				<?php 
+					if ($_SESSION['error_msg']) {
+						echo '<div class="error_msg">' . $_SESSION['error_msg'] . '</div>';
+						unset($_SESSION['error_msg']);
+					}
+				 ?>
 				<?php echo $args['before_title'] . apply_filters('widget_title', 'Login') . $args['after_title']; ?>
 				<div id="wp-auth-login-widget">
 					<form action="<?php echo get_bloginfo('url') ?>/login_process" method="post">
