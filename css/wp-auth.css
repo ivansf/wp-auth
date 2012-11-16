@@ -9,6 +9,7 @@
 	width: 98%;
 	padding: 4px;
 }
+.wp-auth-error,
 .error_msg {
 	background: #990000;
 	color: #FFF;

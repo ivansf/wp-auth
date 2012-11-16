@@ -3,7 +3,7 @@
 Plugin Name: WP Auth
 Plugin URI: http://www.ivansotof.com/
 Description: Auth functions for extending WP.
-Version: 0.5
+Version: 1.0
 Author: Ivan Soto
 Author URI: http://www.ivansotof.com
 */
@@ -35,6 +35,8 @@ class WpAuth {
 
 		// hiding a warning that will try to debug later.
 		@$this->hide_admin_login();
+
+		$this->hide_admin_bar();
 	}
 
 
@@ -63,6 +65,7 @@ class WpAuth {
 			update_option('wp-auth-boxstyle', $_POST['wp-auth-box-style']);
 			update_option('wp-auth-buttonstyle', $_POST['wp-auth-button-style']);
 			update_option('wp-auth-hide-admin', $_POST['lock-wp-admin']);
+			update_option('wp-auth-hide-admin-bar', $_POST['hide-top-bar']);
 		}
 		// Template page.
 		include ( dirname( __FILE__ ) . '/view-auth-options.php' );
@@ -472,6 +475,17 @@ class WpAuth {
 			exit;
 		}
 
+	}
+
+	function hide_admin_bar()
+	{
+		$user = wp_get_current_user();
+		if (get_option('wp-auth-hide-admin-bar', 'no') !== 'yes') 
+			return;
+		if ( !empty( $user->roles ) && is_array( $user->roles ) ) {
+			foreach ( $user->roles as $role )
+				if ($role === 'subscriber') show_admin_bar(false);
+		}
 	}
 }
 

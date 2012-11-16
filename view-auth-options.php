@@ -8,6 +8,7 @@
 			<?php $box_style = get_option('wp-auth-boxstyle', 'white') ?>
 			<?php $button_style = get_option('wp-auth-buttonstyle', 'blue') ?>
 			<?php $wp_hide_admin = get_option('wp-auth-hide-admin', 'no'); //echo $wp_hide_admin; exit; ?>
+			<?php $wp_hide_admin_bar = get_option('wp-auth-hide-admin-bar', 'no'); //echo $wp_hide_admin; exit; ?>
 
 		<h2>Instructions</h2>
 
@@ -19,6 +20,7 @@
 		<h2>Theme</h2>
 		<table class="form-table">
 			<tbody>
+				<!--
 				<tr>
 					<th scope="row">
 						Box Style
@@ -31,8 +33,8 @@
 							<option value="dark" <?php if ($box_style == 'dark') echo 'selected' ?> >Dark</option>
 						</select>
 						<p class="description">Box surrounding the login, registration and password recovery box.</p>
-					</td>
-				</tr>
+					</td> 
+				</tr>-->
 				<tr>
 					<th scope="row">
 						Button Style
@@ -73,7 +75,9 @@
 				<tr>
 					<th scope="row">Admin Bar</th>
 					<td>
-						<input type="checkbox" name="hide-top-bar"> Hides the admin bar for users with subscriber role.
+						<input type="checkbox" name="hide-top-bar" value="yes"
+							<?php echo $wp_hide_admin_bar ?  'checked' : '';  ?>
+						> Hides the admin bar for users with Subscriber role.
 						<p class="description">Hides admin top bar for subscribers.</p>
 					</td>
 				</tr>
@@ -83,7 +87,7 @@
 		<p>
 		<input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes">
 		<div class="clear">&nbsp;</div>
-		A plugin made <a href="#">byRobots</a>
+		A plugin made <a href="http://www.byrobots.com/?utm_source=wpauth&utm_medium=link&utm_campaign=WP%2BAuth" target="_blank">byRobots</a>
 		</p>
 	</form>
 </div>
